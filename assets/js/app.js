@@ -960,11 +960,11 @@
     const starsNode = document.getElementById("rotatorStars");
     const extra = document.getElementById("rotatorExtra");
     const adGraphic = document.getElementById("rotatorAdGraphic");
+    const prevBtn = document.getElementById("rotatorPrev");
+    const nextBtn = document.getElementById("rotatorNext");
     const panel = document.getElementById("reviewRotatorPanel") || (quote ? quote.closest(".review-rotator") : null);
-    const total = document.getElementById("homeReviewCount");
 
     if (!quote) return;
-    if (total) total.textContent = String(reviews.length);
 
     const classSlide = {
       type: "class",
@@ -991,8 +991,8 @@
     }
 
     let index = 0;
-    const paint = function () {
-      const slide = slides[index];
+    let timer = null;
+    const renderSlide = function (slide) {
       if (slide.type === "class") {
         if (panel) panel.classList.add("is-ad");
         if (adGraphic) adGraphic.setAttribute("aria-hidden", "false");
@@ -1009,12 +1009,43 @@
         if (extra) extra.textContent = "";
         if (starsNode) starsNode.textContent = stars(item.rating);
       }
+    };
+    const paint = function () {
+      const slide = slides[index];
+      renderSlide(slide);
+    };
+    const showNext = function () {
       index = (index + 1) % slides.length;
+      paint();
+    };
+    const showPrev = function () {
+      index = (index - 1 + slides.length) % slides.length;
+      paint();
+    };
+    const restartTimer = function () {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+      if (slides.length > 1) {
+        timer = setInterval(showNext, 8500);
+      }
     };
 
     paint();
-    if (slides.length > 1) {
-      setInterval(paint, 8500);
+    restartTimer();
+
+    if (prevBtn) {
+      prevBtn.addEventListener("click", function () {
+        showPrev();
+        restartTimer();
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener("click", function () {
+        showNext();
+        restartTimer();
+      });
     }
   }
 

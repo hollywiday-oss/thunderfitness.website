@@ -71,7 +71,13 @@
 
         <section class="section split">
           <article class="panel reveal delay-1 review-rotator" id="reviewRotatorPanel">
-            <h2>Client Momentum</h2>
+            <div class="rotator-head">
+              <h2>Client Momentum</h2>
+              <div class="rotator-controls" aria-label="Review slider controls">
+                <button id="rotatorPrev" class="rotator-arrow" type="button" aria-label="Previous review or ad">&#8249;</button>
+                <button id="rotatorNext" class="rotator-arrow" type="button" aria-label="Next review or ad">&#8250;</button>
+              </div>
+            </div>
             <div id="rotatorAdGraphic" class="rotator-ad-graphic" aria-hidden="true">
               <span class="ad-bar"></span>
               <span class="ad-ring left"></span>
@@ -82,7 +88,6 @@
             <div id="rotatorStars" class="star-row" aria-hidden="true"></div>
             <div id="rotatorMeta" class="review-meta"></div>
             <p id="rotatorExtra" class="rotator-extra muted"></p>
-            <p class="muted">Now showing feedback from <strong id="homeReviewCount">0</strong> clients.</p>
           </article>
           <article class="panel reveal delay-2">
             <h2>Quick Access</h2>
