@@ -406,6 +406,12 @@ textarea {
   margin: 0;
 }
 
+.rotator-heading {
+  color: #f3d862;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 10px rgba(214, 162, 32, 0.28);
+}
+
 .rotator-controls {
   display: inline-flex;
   align-items: center;

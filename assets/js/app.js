@@ -358,7 +358,7 @@
       homeCardThreeTitle: "Weekly Coaching",
       homeCardThreeText: "Message support, assignment check-ins, and data-driven adjustments each week.",
       homeClassAdTitle: "CAListhenics with CAL",
-      homeClassAdSchedule: "Sponsored Class Ad - Wednesdays at 11:00 AM",
+      homeClassAdSchedule: "Wednesdays at 11:00 AM",
       homeClassAdDetails: "Bodyweight-focused class for coordination, endurance, strength, and mobility. Great for all levels.",
       aboutPhoto: DEFAULT_ABOUT_PHOTO,
       aboutHeading: "Meet your Thunder Fitness coach",
@@ -373,7 +373,9 @@
   }
 
   function getSiteSettings() {
-    return { ...defaultSiteSettings(), ...load(KEYS.siteSettings, {}) };
+    const merged = { ...defaultSiteSettings(), ...load(KEYS.siteSettings, {}) };
+    merged.homeClassAdSchedule = normalizeClassAdSchedule(merged.homeClassAdSchedule);
+    return merged;
   }
 
   function saveSiteSettings(partialSettings) {
@@ -398,6 +400,11 @@
   function normalizeAboutMapQuery(value) {
     const query = (value || "").trim();
     return query || "Manhattan, New York";
+  }
+
+  function normalizeClassAdSchedule(value) {
+    const schedule = (value || "").trim().replace(/^sponsored\s+class\s+ad\s*-\s*/i, "");
+    return schedule || "Wednesdays at 11:00 AM";
   }
 
   function buildAboutMapSrc(value) {
@@ -1136,6 +1143,7 @@
   function initHome() {
     const settings = getSiteSettings();
     const reviews = load(KEYS.reviews, []).filter((item) => item.showOnHome !== false);
+    const heading = document.getElementById("rotatorHeading");
     const quote = document.getElementById("rotatorQuote");
     const meta = document.getElementById("rotatorMeta");
     const starsNode = document.getElementById("rotatorStars");
@@ -1150,7 +1158,7 @@
     const classSlide = {
       type: "class",
       title: settings.homeClassAdTitle,
-      schedule: settings.homeClassAdSchedule,
+      schedule: normalizeClassAdSchedule(settings.homeClassAdSchedule),
       details: settings.homeClassAdDetails
     };
 
@@ -1174,6 +1182,9 @@
     let index = 0;
     let timer = null;
     const renderSlide = function (slide) {
+      if (heading) {
+        heading.textContent = settings.homeClassAdTitle;
+      }
       if (slide.type === "class") {
         if (panel) panel.classList.add("is-ad");
         if (adGraphic) adGraphic.setAttribute("aria-hidden", "false");
