@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thunder Fitness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <script defer src="../assets/js/app.js"></script>
+  </head>
+  <body data-page="admin">
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="index.html"><img class="brand-logo" src="../assets/logo.png" alt="Thunder Fitness logo" /><span class="brand-name">Thunder Fitness</span></a>
+        <span class="badge">Admin Dashboard</span>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <section id="trainerLoginPanel" class="panel reveal">
+          <span class="badge">Trainer Login</span>
+          <h1>Manage clients, assignments, and consultation requests</h1>
+          <p class="muted">Demo credentials: <strong>coach@thunder.fit / ThunderAdmin!</strong></p>
+
+          <form id="trainerLoginForm" class="form-grid">
+            <label>
+              Email
+              <input id="trainerEmail" type="email" required />
+            </label>
+            <label>
+              Password
+              <input id="trainerPassword" type="password" required />
+            </label>
+            <div class="full">
+              <button class="btn btn-primary" type="submit">Sign In</button>
+            </div>
+          </form>
+          <div id="trainerLoginNotice" class="notice"></div>
+        </section>
+
+        <section id="trainerDashboard" class="hidden">
+          <div class="kpis section">
+            <article class="kpi"><strong id="kpiConsults">0</strong>Pending Consultations</article>
+            <article class="kpi"><strong id="kpiBookings">0</strong>Total Bookings</article>
+            <article class="kpi"><strong id="kpiMessages">0</strong>New Messages</article>
+            <article class="kpi"><strong id="kpiAssignments">0</strong>Active Assignments</article>
+          </div>
+
+          <section class="section panel">
+            <h2>Admin Navigation</h2>
+            <p class="muted">Use tabs to work inside the trainer console, or use Fresh Items quick actions to jump directly where needed.</p>
+            <div class="admin-tab-row" role="tablist" aria-label="Admin dashboard tabs">
+              <button class="admin-tab-btn active" type="button" data-admin-tab="fresh">Fresh Items <span id="freshTabCount" class="tab-count">0</span></button>
+              <button class="admin-tab-btn" type="button" data-admin-tab="intake">Intakes and Bookings</button>
+              <button class="admin-tab-btn" type="button" data-admin-tab="messages">Messages <span id="freshMessagesCount" class="tab-count">0</span></button>
+              <button class="admin-tab-btn" type="button" data-admin-tab="assignments">Assignments</button>
+              <button class="admin-tab-btn" type="button" data-admin-tab="reviews">Reviews <span id="freshReviewsCount" class="tab-count">0</span></button>
+              <button class="admin-tab-btn" type="button" data-admin-tab="availability">Availability</button>
+              <button class="admin-tab-btn" type="button" data-admin-tab="website">Website</button>
+            </div>
+          </section>
+
+          <section class="section admin-panel" data-admin-panel="fresh">
+            <div class="split">
+              <article class="panel">
+                <h2>New client intakes</h2>
+                <div id="freshConsultations" class="list"></div>
+              </article>
+              <article class="panel">
+                <h2>Bookings needing review</h2>
+                <div id="freshBookings" class="list"></div>
+              </article>
+            </div>
+            <div class="split section">
+              <article class="panel">
+                <h2>New client messages</h2>
+                <div id="freshMessages" class="list"></div>
+              </article>
+              <article class="panel">
+                <h2>New review submissions</h2>
+                <div id="freshReviews" class="list"></div>
+              </article>
+            </div>
+            <div id="freshActionNotice" class="notice"></div>
+          </section>
+
+          <section class="section admin-panel hidden" data-admin-panel="intake">
+            <div class="split">
+              <article class="panel">
+                <h2>Incoming consultation requests</h2>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Goal</th>
+                        <th>Requested Slot</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="consultationsBody"></tbody>
+                  </table>
+                </div>
+              </article>
+
+              <article class="panel">
+                <h2>Shared calendar bookings</h2>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Client</th>
+                        <th>Type</th>
+                        <th>Recurring</th>
+                        <th>Reschedule Suggestion</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="bookingsBody"></tbody>
+                  </table>
+                </div>
+                <div id="bookingsAdminNotice" class="notice"></div>
+              </article>
+            </div>
+          </section>
+
+          <section class="section admin-panel hidden" data-admin-panel="messages">
+            <article class="panel">
+              <h2>Messages from clients</h2>
+              <div id="messagesList" class="list"></div>
+            </article>
+          </section>
+
+          <section class="section admin-panel hidden" data-admin-panel="assignments">
+            <div class="split">
+              <article class="panel">
+                <h2>Send workout assignment</h2>
+                <form id="assignWorkoutForm" class="form-grid">
+                  <label class="full">
+                    Select client
+                    <select id="assignmentClient"></select>
+                  </label>
+                  <label class="full">
+                    Assignment title
+                    <input id="assignmentTitle" type="text" placeholder="Week 2 Lower Body Progression" required />
+                  </label>
+                  <label class="full">
+                    Assignment description
+                    <textarea id="assignmentDescription" required placeholder="Reps, sets, intensity, and recovery instructions."></textarea>
+                  </label>
+                  <label>
+                    Due date
+                    <input id="assignmentDueDate" type="date" required />
+                  </label>
+                  <div>
+                    <button class="btn btn-primary" type="submit" style="margin-top: 1.35rem">Send Assignment</button>
+                  </div>
+                </form>
+                <div id="assignWorkoutNotice" class="notice"></div>
+              </article>
+
+              <article class="panel">
+                <h2>Assignment progress board</h2>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Client</th>
+                        <th>Assignment</th>
+                        <th>Due</th>
+                        <th>Progress</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="assignmentsBody"></tbody>
+                  </table>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <section class="section admin-panel hidden" data-admin-panel="reviews">
+            <article class="panel">
+              <h2>Review submissions</h2>
+              <p class="muted">Set whether each review is displayed on the public homepage.</p>
+              <div id="adminReviews" class="list"></div>
+            </article>
+          </section>
+
+          <section class="section admin-panel hidden" data-admin-panel="availability">
+            <article class="panel">
+              <h2>Set Availability</h2>
+              <p class="muted">Set default weekday hours first, then adjust specific dates below. Booked slots cannot be changed.</p>
+
+              <section class="availability-defaults">
+                <h3>Default Daily Hours (Future Dates)</h3>
+                <p class="muted">Choose a weekday, toggle open/closed 1-hour slots, then save. Optionally apply to all future dates for that weekday.</p>
+                <div class="availability-default-controls">
+                  <label>
+                    Weekday
+                    <select id="availabilityDefaultDay">
+                      <option value="0">Sunday</option>
+                      <option value="1">Monday</option>
+                      <option value="2">Tuesday</option>
+                      <option value="3">Wednesday</option>
+                      <option value="4">Thursday</option>
+                      <option value="5">Friday</option>
+                      <option value="6">Saturday</option>
+                    </select>
+                  </label>
+                  <label class="availability-apply-toggle">
+                    <input id="availabilityDefaultApplyFuture" type="checkbox" />
+                    Also apply to all future dates for this weekday
+                  </label>
+                  <button id="availabilitySaveDefaults" class="btn btn-light" type="button">Save Weekday Defaults</button>
+                </div>
+                <div id="availabilityDefaultsBoard" class="availability-default-grid"></div>
+              </section>
+
+              <h3 style="margin-top: 1rem">Specific Date Overrides</h3>
+              <p class="muted">Click an open 1-hour slot to close it, or a closed slot to reopen it for that date.</p>
+              <div class="stack" style="margin-top: 0.35rem">
+                <button id="availabilityPrevWeek" class="btn btn-light" type="button">Previous week</button>
+                <button id="availabilityNextWeek" class="btn btn-light" type="button">Next week</button>
+              </div>
+              <p id="availabilityRangeLabel" class="muted" style="margin-top: 0.45rem"></p>
+              <div id="availabilityBoard" class="calendar-grid"></div>
+              <div id="availabilityNotice" class="notice"></div>
+            </article>
+          </section>
+
+          <section class="section admin-panel hidden" data-admin-panel="website">
+            <article class="panel">
+              <h2>Website Customization</h2>
+              <p class="muted">Update homepage messaging, featured image, and About page text from one place.</p>
+              <div class="split">
+                <article class="panel">
+                  <h3>Homepage content</h3>
+                  <form id="siteContentForm" class="form-grid">
+                    <label class="full">
+                      Homepage headline
+                      <input id="siteHomeTitle" type="text" required />
+                    </label>
+                    <label class="full">
+                      Homepage subtext
+                      <textarea id="siteHomeText" required></textarea>
+                    </label>
+                    <label class="full">
+                      Featured homepage image
+                      <input id="siteHeroImageFile" type="file" accept="image/*" />
+                    </label>
+                    <div class="full">
+                      <img id="siteHeroImagePreview" src="../assets/logo.png" alt="Homepage image preview" class="admin-image-preview" />
+                    </div>
+                    <div class="full stack">
+                      <button id="siteResetHomeImage" class="btn btn-light" type="button">Reset to Thunder logo</button>
+                    </div>
+                    <div class="full">
+                      <button class="btn btn-primary" type="submit">Save Homepage Settings</button>
+                    </div>
+                  </form>
+                  <div id="siteContentNotice" class="notice"></div>
+                </article>
+
+                <article class="panel">
+                  <h3>About page content</h3>
+                  <form id="aboutContentForm" class="form-grid">
+                    <label class="full">
+                      About heading
+                      <input id="aboutAdminHeading" type="text" required />
+                    </label>
+                    <label class="full">
+                      Intro paragraph
+                      <textarea id="aboutAdminIntro" required></textarea>
+                    </label>
+                    <label class="full">
+                      About photo
+                      <input id="aboutImageFile" type="file" accept="image/*" />
+                    </label>
+                    <div class="full">
+                      <img
+                        id="aboutImagePreview"
+                        src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80"
+                        alt="About photo preview"
+                        class="admin-image-preview"
+                      />
+                    </div>
+                    <div class="full stack">
+                      <button id="aboutResetImage" class="btn btn-light" type="button">Reset About photo</button>
+                    </div>
+                    <label class="full">
+                      Specialties paragraph
+                      <textarea id="aboutAdminSpecialties" required></textarea>
+                    </label>
+                    <label class="full">
+                      Certifications line
+                      <input id="aboutAdminCertifications" type="text" required />
+                    </label>
+                    <label class="full">
+                      Coaching style line
+                      <input id="aboutAdminCoachingStyle" type="text" required />
+                    </label>
+                    <label class="full">
+                      Serving line
+                      <input id="aboutAdminServing" type="text" required />
+                    </label>
+                    <label class="full">
+                      Location note
+                      <input id="aboutAdminLocationNote" type="text" required />
+                    </label>
+                    <label class="full">
+                      Map location
+                      <input id="aboutAdminMapQuery" type="text" placeholder="City, state or full address" required />
+                    </label>
+                    <div class="full">
+                      <button class="btn btn-primary" type="submit">Save About Settings</button>
+                    </div>
+                  </form>
+                  <div id="aboutContentNotice" class="notice"></div>
+                </article>
+              </div>
+            </article>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">Trainer dashboard website for managing clients, assignments, and incoming requests.</footer>
+  </body>
+</html>
+
+
+
+
+

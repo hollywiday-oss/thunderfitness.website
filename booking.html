@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thunder Fitness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script defer src="assets/js/app.js"></script>
+  </head>
+  <body data-page="booking">
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="index.html"><img class="brand-logo" src="assets/logo.png" alt="Thunder Fitness logo" /><span class="brand-name">Thunder Fitness</span></a>
+        <nav class="nav-links" aria-label="Main">
+          <a data-nav="home" href="index.html">Home</a>
+          <a data-nav="start" href="start-here.html">New Clients</a>
+          <a data-nav="booking" href="booking.html">Calendar</a>
+          <a data-nav="portal" href="client-portal.html">Client Portal</a>
+          <a data-nav="reviews" href="reviews.html">Reviews</a>
+          <a data-nav="about" href="about.html">About</a>
+          
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="bookingAuthGate" class="container hidden">
+        <article class="panel reveal">
+          <span class="badge">Client Sign-In Required</span>
+          <h1>Sign in to access the booking calendar</h1>
+          <p class="muted">The shared calendar and booking tools are only available for signed-in clients so requests can be confirmed in your portal.</p>
+          <div class="stack">
+            <a class="btn btn-primary" href="client-portal.html">Sign in to client portal</a>
+            <a class="btn btn-light" href="start-here.html">New client? Start here</a>
+          </div>
+        </article>
+      </section>
+
+      <div id="bookingAuthedContent" class="container split">
+        <section class="panel reveal">
+          <span class="badge">Shared Booking Calendar</span>
+          <h1>Reserve your training time</h1>
+          <p class="muted">Consultation and session bookings require a signed-in client account so your request can be confirmed and tracked in your portal.</p>
+
+          <form id="bookingForm" class="form-grid">
+            <label>
+              Booking type
+              <select id="bookingType">
+                <option>Consultation</option>
+                <option>Session</option>
+              </select>
+            </label>
+            <label>
+              Date
+              <select id="bookingDate"></select>
+            </label>
+            <label>
+              Time
+              <select id="bookingTime"></select>
+            </label>
+            <label>
+              Name
+              <input id="bookingName" type="text" placeholder="Client name" required />
+            </label>
+            <label>
+              Email
+              <input id="bookingEmail" type="email" placeholder="client@email.com" required />
+            </label>
+            <label>
+              Phone
+              <input id="bookingPhone" type="tel" placeholder="(555) 123-4567" required />
+            </label>
+            <label class="full">
+              Notes
+              <textarea id="bookingNotes" placeholder="Optional goals, focus area, or preferences."></textarea>
+            </label>
+            <label class="full" style="flex-direction: row; align-items: center; gap: 0.6rem; margin-top: 0.2rem">
+              <input id="bookingRecurring" type="checkbox" />
+              Request recurring booking (trainer approval required)
+            </label>
+            <div id="recurringFields" class="full hidden">
+              <div class="form-grid">
+                <label>
+                  Repeat
+                  <select id="recurringFrequency">
+                    <option value="Weekly">Weekly</option>
+                    <option value="Biweekly">Biweekly</option>
+                    <option value="Monthly">Monthly</option>
+                  </select>
+                </label>
+                <label>
+                  Number of sessions
+                  <select id="recurringCount">
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="12">12</option>
+                  </select>
+                </label>
+              </div>
+              <p class="muted" style="margin: 0.5rem 0 0">Recurring requests are reviewed by the trainer before approval.</p>
+            </div>
+            <div class="full stack">
+              <button class="btn btn-primary" type="submit">Submit Booking</button>
+              <a class="btn btn-light" href="client-portal.html">Sign in or create account</a>
+            </div>
+          </form>
+          <div id="bookingNotice" class="notice"></div>
+        </section>
+
+        <section class="panel reveal delay-1">
+          <h2>Availability calendar (1-hour slots)</h2>
+          <div class="stack" style="margin-top: 0.3rem">
+            <button id="calendarPrevWeek" class="btn btn-light" type="button">Previous week</button>
+            <button id="calendarNextWeek" class="btn btn-light" type="button">Next week</button>
+          </div>
+          <p id="calendarRangeLabel" class="muted" style="margin-top: 0.45rem"></p>
+          <div id="calendarBoard" class="calendar-grid"></div>
+          <h3 style="margin-top: 1rem">Booking history is private</h3>
+          <div id="upcomingBookings" class="list"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">Consultations and sessions update this shared calendar in real time for demo purposes.</footer>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

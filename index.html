@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thunder Fitness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script defer src="assets/js/app.js"></script>
+  </head>
+  <body data-page="home">
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="index.html"><img class="brand-logo" src="assets/logo.png" alt="Thunder Fitness logo" /><span class="brand-name">Thunder Fitness</span></a>
+        <nav class="nav-links" aria-label="Main">
+          <a data-nav="home" href="index.html">Home</a>
+          <a data-nav="start" href="start-here.html">New Clients</a>
+          <a data-nav="booking" href="booking.html">Calendar</a>
+          <a data-nav="portal" href="client-portal.html">Client Portal</a>
+          <a data-nav="reviews" href="reviews.html">Reviews</a>
+          <a data-nav="about" href="about.html">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <section class="hero reveal">
+          <div>
+            <span class="badge">Thunder Fitness</span>
+            <h1 id="homeHeroTitle">Charge your body. Build your strongest routine.</h1>
+            <p id="homeHeroText">
+              Personal coaching designed for real schedules. New clients can request a consultation, existing clients can book sessions,
+              track progress, and stay connected with your trainer in one place.
+            </p>
+            <div class="stack">
+              <a class="btn btn-primary" href="start-here.html">New Client? Request Consultation</a>
+              <a class="btn btn-light" href="client-portal.html">Already a client? Sign in to book</a>
+            </div>
+          </div>
+          <div class="hero-media-shell reveal delay-1" aria-label="Featured image">
+            <img id="homeHeroImage" src="assets/logo.png" alt="Thunder Fitness featured" loading="lazy" />
+          </div>
+        </section>
+
+        <script>
+          (function () {
+            try {
+              const raw = localStorage.getItem("tf_site_settings");
+              if (!raw) return;
+              const settings = JSON.parse(raw) || {};
+
+              const title = document.getElementById("homeHeroTitle");
+              const text = document.getElementById("homeHeroText");
+              const image = document.getElementById("homeHeroImage");
+
+              const nextTitle = (settings.homeHeroTitle || "").trim();
+              const nextText = (settings.homeHeroText || "").trim();
+              const nextImage = (settings.homeHeroImage || "").trim();
+
+              if (title && nextTitle) title.textContent = nextTitle;
+              if (text && nextText) text.textContent = nextText;
+              if (image && nextImage) image.src = nextImage;
+            } catch (_err) {
+              // Keep default HTML values if local settings are unavailable.
+            }
+          })();
+        </script>
+
+        <section class="section split">
+          <article class="panel reveal delay-1 review-rotator" id="reviewRotatorPanel">
+            <h2>Client Momentum</h2>
+            <div id="rotatorAdGraphic" class="rotator-ad-graphic" aria-hidden="true">
+              <span class="ad-bar"></span>
+              <span class="ad-ring left"></span>
+              <span class="ad-ring right"></span>
+              <span class="ad-athlete"></span>
+            </div>
+            <p id="rotatorQuote" class="review-quote">""</p>
+            <div id="rotatorStars" class="star-row" aria-hidden="true"></div>
+            <div id="rotatorMeta" class="review-meta"></div>
+            <p id="rotatorExtra" class="rotator-extra muted"></p>
+            <p class="muted">Now showing feedback from <strong id="homeReviewCount">0</strong> clients.</p>
+          </article>
+          <article class="panel reveal delay-2">
+            <h2>Quick Access</h2>
+            <div class="list">
+              <a class="list-item" href="start-here.html"><strong>New Client Intake</strong><br /><span class="muted">Request consultation and training goals review.</span></a>
+              <a class="list-item" href="client-portal.html"><strong>Client Portal Login</strong><br /><span class="muted">Existing clients view assignments and update progress.</span></a>
+              <a class="list-item" href="booking.html"><strong>Book Calendar Time</strong><br /><span class="muted">Shared calendar for consultations and regular sessions.</span></a>
+            </div>
+          </article>
+        </section>
+
+        <section class="section card-grid">
+          <article class="card reveal">
+            <h3>Strength + Conditioning</h3>
+            <p class="muted">Customized plans that balance power, mobility, and sustainable progression.</p>
+          </article>
+          <article class="card reveal delay-1">
+            <h3>Nutrition Habits</h3>
+            <p class="muted">Simple accountability prompts and routines that match your lifestyle.</p>
+          </article>
+          <article class="card reveal delay-2">
+            <h3>Weekly Coaching</h3>
+            <p class="muted">Message support, assignment check-ins, and data-driven adjustments each week.</p>
+          </article>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      Thunder Fitness demo site. Placeholder content and workflows are ready for your real data.
+    </footer>
+  </body>
+</html>
+
+
+
+
+
+
+
+

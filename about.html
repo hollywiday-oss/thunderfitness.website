@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thunder Fitness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script defer src="assets/js/app.js"></script>
+  </head>
+  <body data-page="about">
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="index.html"><img class="brand-logo" src="assets/logo.png" alt="Thunder Fitness logo" /><span class="brand-name">Thunder Fitness</span></a>
+        <nav class="nav-links" aria-label="Main">
+          <a data-nav="home" href="index.html">Home</a>
+          <a data-nav="start" href="start-here.html">New Clients</a>
+          <a data-nav="booking" href="booking.html">Calendar</a>
+          <a data-nav="portal" href="client-portal.html">Client Portal</a>
+          <a data-nav="reviews" href="reviews.html">Reviews</a>
+          <a data-nav="about" href="about.html">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container split">
+        <section class="panel reveal">
+          <span class="badge">About The Trainer</span>
+          <h1 id="aboutHeading">Meet your Thunder Fitness coach</h1>
+          <p id="aboutIntro">
+            Placeholder bio: The Thunder Fitness approach combines accountable coaching, high-energy sessions, and practical habits to help
+            clients feel stronger and stay consistent.
+          </p>
+          <p id="aboutSpecialties" class="muted">
+            Specialties: strength training, body composition, beginner confidence building, athletic conditioning, and long-term routine design.
+          </p>
+          <div class="list">
+            <div id="aboutCertifications" class="list-item"><strong>Certifications:</strong> NASM-CPT, CPR/AED, Precision Nutrition L1 (placeholder)</div>
+            <div id="aboutCoachingStyle" class="list-item"><strong>Coaching style:</strong> Positive accountability, progress tracking, and clear weekly targets</div>
+            <div id="aboutServing" class="list-item"><strong>Serving:</strong> In-person and online (placeholder region)</div>
+          </div>
+        </section>
+
+        <section class="panel reveal delay-1">
+          <img
+            id="aboutPhoto"
+            class="about-photo"
+            src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80"
+            alt="Thunder Fitness coach"
+            loading="lazy"
+          />
+        </section>
+      </div>
+
+      <div class="container section panel reveal delay-2">
+        <h2>Location</h2>
+        <p id="aboutLocationNote" class="muted">Placeholder studio location map for Thunder Fitness.</p>
+        <iframe id="aboutMapEmbed"
+          class="map-embed"
+          title="Thunder Fitness location"
+          loading="lazy"
+          src="https://www.google.com/maps?q=Manhattan,+New+York&output=embed"
+        ></iframe>
+      </div>
+    </main>
+
+    <footer class="footer">Replace image, certifications, and map address with final trainer details.</footer>
+  </body>
+</html>
+
+
+

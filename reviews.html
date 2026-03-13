@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thunder Fitness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script defer src="assets/js/app.js"></script>
+  </head>
+  <body data-page="reviews">
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="index.html"><img class="brand-logo" src="assets/logo.png" alt="Thunder Fitness logo" /><span class="brand-name">Thunder Fitness</span></a>
+        <nav class="nav-links" aria-label="Main">
+          <a data-nav="home" href="index.html">Home</a>
+          <a data-nav="start" href="start-here.html">New Clients</a>
+          <a data-nav="booking" href="booking.html">Calendar</a>
+          <a data-nav="portal" href="client-portal.html">Client Portal</a>
+          <a data-nav="reviews" href="reviews.html">Reviews</a>
+          <a data-nav="about" href="about.html">About</a>
+          
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container split">
+        <section class="panel reveal">
+          <span class="badge">Client Feedback</span>
+          <h1>Share your review</h1>
+          <p class="muted">Clients can submit public feedback with their name or anonymously.</p>
+
+          <form id="reviewForm" class="form-grid">
+            <label>
+              Name (optional)
+              <input id="reviewName" type="text" placeholder="Your name" />
+            </label>
+            <label>
+              Rating
+              <select id="reviewRating">
+                <option value="5">5 stars</option>
+                <option value="4">4 stars</option>
+                <option value="3">3 stars</option>
+                <option value="2">2 stars</option>
+                <option value="1">1 star</option>
+              </select>
+            </label>
+            <label class="full">
+              Review
+              <textarea id="reviewText" placeholder="Tell us about your experience with Thunder Fitness." required></textarea>
+            </label>
+            <label class="full" style="flex-direction: row; align-items: center; gap: 0.6rem">
+              <input id="reviewAnonymous" type="checkbox" />
+              Submit anonymously
+            </label>
+            <div class="full">
+              <button class="btn btn-primary" type="submit">Post Review</button>
+            </div>
+          </form>
+          <div id="reviewNotice" class="notice"></div>
+        </section>
+
+        <section class="panel reveal delay-1">
+          <h2>Latest reviews</h2>
+          <div id="reviewFeed" class="list"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">Reviews submitted here are shown on the homepage rotator and trainer dashboard.</footer>
+  </body>
+</html>
+
+
+
+
+
+

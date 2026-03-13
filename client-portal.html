@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thunder Fitness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script defer src="assets/js/app.js"></script>
+  </head>
+  <body data-page="portal">
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="index.html"><img class="brand-logo" src="assets/logo.png" alt="Thunder Fitness logo" /><span class="brand-name">Thunder Fitness</span></a>
+        <nav class="nav-links" aria-label="Main">
+          <a data-nav="home" href="index.html">Home</a>
+          <a data-nav="start" href="start-here.html">New Clients</a>
+          <a data-nav="booking" href="booking.html">Calendar</a>
+          <a data-nav="portal" href="client-portal.html">Client Portal</a>
+          <a data-nav="reviews" href="reviews.html">Reviews</a>
+          <a data-nav="about" href="about.html">About</a>
+          
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <section id="clientLoginPanel" class="panel reveal">
+          <span class="badge">Client Access</span>
+          <h1>Sign in or create your portal account</h1>
+          <p class="muted">Demo login: <strong>jordan@example.com / 1234</strong> or <strong>taylor@example.com / 5678</strong>.</p>
+
+          <div class="split">
+            <div>
+              <h3>Existing client sign in</h3>
+              <form id="clientLoginForm" class="form-grid">
+                <label>
+                  Email
+                  <input id="clientEmail" type="email" required />
+                </label>
+                <label>
+                  PIN
+                  <input id="clientPin" type="password" required />
+                </label>
+                <div class="full">
+                  <button class="btn btn-primary" type="submit">Sign In</button>
+                </div>
+              </form>
+              <div id="clientLoginNotice" class="notice"></div>
+            </div>
+
+            <div>
+              <h3>New client sign up</h3>
+              <p class="muted">Create your account, then confirm a one-time passcode sent to your email.</p>
+              <form id="clientSignupForm" class="form-grid">
+                <label class="full">
+                  Full name
+                  <input id="signupName" type="text" placeholder="Your full name" required />
+                </label>
+                <label>
+                  Email
+                  <input id="signupEmail" type="email" placeholder="you@email.com" required />
+                </label>
+                <label>
+                  Phone
+                  <input id="signupPhone" type="tel" placeholder="(555) 123-4567" required />
+                </label>
+                <label>
+                  PIN
+                  <input id="signupPin" type="password" minlength="4" placeholder="Choose a PIN" required />
+                </label>
+                <div class="full">
+                  <button class="btn btn-secondary" type="submit">Create Account</button>
+                </div>
+              </form>
+              <div id="clientSignupNotice" class="notice"></div>
+              <div id="otpVerificationPanel" class="panel hidden" style="margin-top: 0.9rem">
+                <h4 style="margin: 0 0 0.35rem">Verify your email</h4>
+                <p id="otpEmailHint" class="muted" style="margin-top: 0">Enter the 6-digit code sent to your email.</p>
+                <form id="otpVerifyForm" class="form-grid">
+                  <label class="full">
+                    One-time passcode
+                    <input id="otpCode" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="123456" required />
+                  </label>
+                  <div class="full stack">
+                    <button class="btn btn-primary" type="submit">Verify and Create Account</button>
+                    <button id="otpResendBtn" class="btn btn-light" type="button">Resend OTP</button>
+                  </div>
+                </form>
+                <div id="otpNotice" class="notice"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="clientDashboard" class="hidden">
+          <div class="panel reveal">
+            <div class="stack" style="justify-content: space-between">
+              <h2 id="clientWelcome">Welcome back.</h2>
+              <button id="clientLogout" class="btn btn-secondary" type="button">Sign Out</button>
+            </div>
+            <p id="portalSubtitle" class="muted">View sessions, update assignment progress, message your trainer, and submit a review.</p>
+            <div id="portalActionNotice" class="notice"></div>
+          </div>
+
+          <div id="consultationGate" class="section panel hidden">
+            <h3>Consultation required before portal tools unlock</h3>
+            <p class="muted">New clients must complete a consultation booking first. Once booked, messaging, reviews, and progress tools unlock automatically.</p>
+            <div class="stack">
+              <a class="btn btn-primary" href="start-here.html">Go to New Clients Intake</a>
+              <a class="btn btn-light" href="booking.html">Book consultation time</a>
+            </div>
+          </div>
+
+          <div id="clientFullAccessArea">
+            <div class="section split">
+              <article class="panel reveal delay-1">
+                <h3>Your booked sessions</h3>
+                <div id="clientBookings" class="list"></div>
+                <a class="btn btn-light" href="booking.html" style="margin-top: 0.8rem">Book more time</a>
+              </article>
+
+              <article class="panel reveal delay-2">
+                <h3>Your workout assignments</h3>
+                <div id="clientAssignments" class="list"></div>
+              </article>
+            </div>
+
+            <div class="section split">
+              <article class="panel">
+                <h3>Update assignment progress</h3>
+                <form id="progressForm" class="form-grid">
+                  <label class="full">
+                    Assignment
+                    <select id="progressAssignmentId"></select>
+                  </label>
+                  <label>
+                    Completion %
+                    <input id="progressPercent" type="number" min="0" max="100" value="0" required />
+                  </label>
+                  <div>
+                    <button class="btn btn-primary" type="submit" style="margin-top: 1.4rem">Save Progress</button>
+                  </div>
+                </form>
+                <div id="progressNotice" class="notice"></div>
+              </article>
+
+              <article class="panel">
+                <h3>Message your trainer</h3>
+                <form id="messageForm" class="form-grid">
+                  <label class="full">
+                    Subject
+                    <input id="messageSubject" type="text" placeholder="Topic" required />
+                  </label>
+                  <label class="full">
+                    Message
+                    <textarea id="messageBody" placeholder="Write your question or update..." required></textarea>
+                  </label>
+                  <div class="full">
+                    <button class="btn btn-secondary" type="submit">Send Message</button>
+                  </div>
+                </form>
+                <div id="messageNotice" class="notice"></div>
+                <h3 style="margin-top: 1rem">Conversation history</h3>
+                <div id="clientMessageHistory" class="list"></div>
+              </article>
+            </div>
+
+            <div class="section panel">
+              <h3>Submit a review</h3>
+              <form id="quickReviewForm" class="form-grid">
+                <label>
+                  Rating
+                  <select id="quickRating">
+                    <option value="5">5 stars</option>
+                    <option value="4">4 stars</option>
+                    <option value="3">3 stars</option>
+                  </select>
+                </label>
+                <label style="flex-direction: row; align-items: center; gap: 0.6rem; margin-top: 1.55rem">
+                  <input id="quickAnonymous" type="checkbox" />
+                  Submit anonymously
+                </label>
+                <label class="full">
+                  Review
+                  <textarea id="quickReviewText" placeholder="How is your Thunder Fitness experience going?" required></textarea>
+                </label>
+                <div class="full">
+                  <button class="btn btn-primary" type="submit">Submit Review</button>
+                </div>
+              </form>
+              <div id="quickReviewNotice" class="notice"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">Client portal data flows directly into the trainer dashboard in this demo.</footer>
+  </body>
+</html>
+
+
+
+
+
+
+
+

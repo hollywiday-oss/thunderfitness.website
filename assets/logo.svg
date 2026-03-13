@@ -1,0 +1,15 @@
+﻿<svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bolt" x1="62" y1="20" x2="158" y2="194" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFE25C"/>
+      <stop offset="1" stop-color="#F0B429"/>
+    </linearGradient>
+    <filter id="glow" x="0" y="0" width="220" height="220" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.96 0 0 0 0 0.74 0 0 0 0 0.16 0 0 0 0.6 0"/>
+      <feBlend in="SourceGraphic" mode="normal"/>
+    </filter>
+  </defs>
+  <circle cx="110" cy="110" r="100" fill="#0F141E" stroke="#2E3748" stroke-width="4"/>
+  <path d="M122 22L52 118H102L90 198L168 92H116L122 22Z" fill="url(#bolt)" filter="url(#glow)"/>
+</svg>

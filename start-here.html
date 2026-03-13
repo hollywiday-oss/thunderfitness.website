@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thunder Fitness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script defer src="assets/js/app.js"></script>
+  </head>
+  <body data-page="start">
+    <header class="site-header">
+      <div class="nav-wrap">
+        <a class="brand" href="index.html"><img class="brand-logo" src="assets/logo.png" alt="Thunder Fitness logo" /><span class="brand-name">Thunder Fitness</span></a>
+        <nav class="nav-links" aria-label="Main">
+          <a data-nav="home" href="index.html">Home</a>
+          <a data-nav="start" href="start-here.html">New Clients</a>
+          <a data-nav="booking" href="booking.html">Calendar</a>
+          <a data-nav="portal" href="client-portal.html">Client Portal</a>
+          <a data-nav="reviews" href="reviews.html">Reviews</a>
+          <a data-nav="about" href="about.html">About</a>
+          
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container split">
+        <section class="panel reveal">
+          <span class="badge">New Clients</span>
+          <h1>Request your consultation</h1>
+          <p class="muted">Tell Thunder Fitness what you want to improve, choose an open consultation slot below, and submit your request.</p>
+
+          <form id="consultationForm" class="form-grid">
+            <label>
+              Full Name
+              <input name="name" type="text" placeholder="Your name" required />
+            </label>
+            <label>
+              Email
+              <input name="email" type="email" placeholder="you@email.com" required />
+            </label>
+            <label>
+              Phone
+              <input name="phone" type="tel" placeholder="(555) 123-4567" required />
+            </label>
+            <label>
+              Goal
+              <select name="goal" required>
+                <option value="">Choose one...</option>
+                <option>Weight loss</option>
+                <option>Strength gain</option>
+                <option>Athletic performance</option>
+                <option>General fitness</option>
+              </select>
+            </label>
+            <label class="full">
+              What should the trainer know?
+              <textarea name="message" placeholder="Current routine, pain points, schedule, etc."></textarea>
+            </label>
+            <input id="consultPreferredDate" name="preferredDate" type="hidden" />
+            <input id="consultPreferredTime" name="preferredTime" type="hidden" />
+            <div class="full panel" style="padding: 0.9rem; margin-top: 0.2rem">
+              <h3 style="margin-bottom: 0.3rem">Choose consultation slot (1-hour intervals)</h3>
+              <p class="muted" id="consultCalendarRange"></p>
+              <div class="stack" style="margin-top: 0.35rem">
+                <button id="consultPrevWeek" class="btn btn-light" type="button">Previous week</button>
+                <button id="consultNextWeek" class="btn btn-light" type="button">Next week</button>
+              </div>
+              <p id="consultSlotSummary" class="muted" style="margin-top: 0.55rem">No consultation slot selected yet.</p>
+              <div id="consultCalendarBoard" class="calendar-grid"></div>
+            </div>
+            <div class="full stack">
+              <button class="btn btn-primary" type="submit">Send Consultation Request</button>
+</div>
+          </form>
+          <div id="consultationNotice" class="notice"></div>
+        </section>
+
+        <section class="panel reveal delay-1">
+          <h2>What happens next</h2>
+          <div class="list">
+            <div class="list-item"><strong>1. Intake submitted</strong><br /><span class="muted">The trainer gets your goals and selected consultation slot.</span></div>
+            <div class="list-item"><strong>2. Trainer reviews request</strong><br /><span class="muted">Your request is confirmed through your client portal.</span></div>
+            <div class="list-item"><strong>3. Plan is built</strong><br /><span class="muted">You receive your starter program and first milestones.</span></div>
+          </div>
+
+          <div class="panel" style="margin-top: 1rem">
+            <h3>Already an existing client?</h3>
+            <p class="muted">This demo includes seeded sample clients and bookings so you can preview both workflows instantly.</p>
+            <a class="btn btn-secondary" href="client-portal.html">Sign in and book a time</a>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">Thunder Fitness intake experience prototype.</footer>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
