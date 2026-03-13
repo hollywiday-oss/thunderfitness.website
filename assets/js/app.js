@@ -97,6 +97,122 @@
     return "pending";
   }
 
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function parseAssignmentStepsInput(value) {
+    return String(value || "")
+      .split(/\r?\n/)
+      .map((line) => line.replace(/^\s*[-*0-9.)]+\s*/, "").trim())
+      .filter(Boolean);
+  }
+
+  function getAssignmentProgressMeta(assignment) {
+    const steps = Array.isArray(assignment && assignment.steps) ? assignment.steps : [];
+    const total = steps.length;
+    const completed = steps.filter((step) => step && step.done === true).length;
+    const percent = total ? Math.round((completed / total) * 100) : 0;
+    return { total, completed, percent };
+  }
+
+  function normalizeAssignmentSteps(rawSteps, fallbackDescription, progressHint) {
+    const next = [];
+
+    if (Array.isArray(rawSteps)) {
+      rawSteps.forEach((step, index) => {
+        const source = step && typeof step === "object" ? step : {};
+        const text = (typeof step === "string" ? step : source.text || source.label || "").trim();
+        if (!text) return;
+        next.push({
+          id: (source.id || ("step_" + index + "_" + uid("i"))).toString(),
+          text: text,
+          done: source.done === true || source.completed === true || source.checked === true,
+          completedAt: source.done || source.completed || source.checked ? source.completedAt || "" : ""
+        });
+      });
+    }
+
+    if (!next.length) {
+      const lines = parseAssignmentStepsInput(fallbackDescription);
+      const fallbackSteps = lines.length
+        ? lines
+        : ["Review assignment details", "Complete workout block 1", "Complete workout block 2", "Log completion notes"];
+      const targetDone = Math.round((clamp(Number(progressHint) || 0, 0, 100) / 100) * fallbackSteps.length);
+
+      fallbackSteps.forEach((text, index) => {
+        next.push({
+          id: "step_" + index + "_" + uid("i"),
+          text: text,
+          done: index < targetDone,
+          completedAt: index < targetDone ? new Date().toISOString() : ""
+        });
+      });
+    }
+
+    return next;
+  }
+
+  function normalizeAssignmentRow(row) {
+    const source = row && typeof row === "object" ? row : {};
+    const steps = normalizeAssignmentSteps(source.steps, source.description, source.progress);
+    const progress = getAssignmentProgressMeta({ steps: steps });
+    const status = progress.percent >= 100 ? "Completed" : progress.percent > 0 ? "In Progress" : "Assigned";
+
+    return {
+      ...source,
+      id: source.id || uid("asg"),
+      clientId: source.clientId || "",
+      clientName: source.clientName || "",
+      clientEmail: source.clientEmail || "",
+      title: source.title || "Workout Assignment",
+      description: source.description || "",
+      dueDate: source.dueDate || isoDateFromNow(7),
+      steps: steps,
+      progress: progress.percent,
+      status: status,
+      createdAt: source.createdAt || new Date().toISOString()
+    };
+  }
+
+  function getAssignments() {
+    const rows = load(KEYS.assignments, []);
+    if (!Array.isArray(rows)) {
+      save(KEYS.assignments, []);
+      return [];
+    }
+
+    let changed = false;
+    const normalized = rows.map((row) => {
+      const next = normalizeAssignmentRow(row);
+      if (JSON.stringify(next) !== JSON.stringify(row)) changed = true;
+      return next;
+    });
+
+    if (changed) {
+      save(KEYS.assignments, normalized);
+    }
+    return normalized;
+  }
+
+  function saveAssignments(rows) {
+    const normalized = (Array.isArray(rows) ? rows : []).map((row) => normalizeAssignmentRow(row));
+    save(KEYS.assignments, normalized);
+    return normalized;
+  }
+
+  function getClientAssignments(client) {
+    if (!client) return [];
+    const email = normalizeEmail(client.email || "");
+    return getAssignments().filter((item) => {
+      return item.clientId === client.id || normalizeEmail(item.clientEmail || "") === email;
+    });
+  }
+
+  function migrateAssignmentChecklists() {
+    getAssignments();
+  }
+
   function buildDefaultDayAvailability() {
     const day = {};
     SLOT_TIMES.forEach((slot) => {
@@ -405,9 +521,13 @@
         clientEmail: "jordan@example.com",
         title: "Week 1 Foundation",
         description: "3 full body sessions + 2 recovery walks (30 min).",
+        steps: [
+          { id: uid("step"), text: "Complete full body session 1", done: true, completedAt: new Date().toISOString() },
+          { id: uid("step"), text: "Complete full body session 2", done: true, completedAt: new Date().toISOString() },
+          { id: uid("step"), text: "Complete full body session 3", done: false, completedAt: "" },
+          { id: uid("step"), text: "Finish two recovery walks (30 min each)", done: false, completedAt: "" }
+        ],
         dueDate: isoDateFromNow(6),
-        progress: 40,
-        status: "In Progress",
         createdAt: new Date().toISOString()
       },
       {
@@ -417,9 +537,13 @@
         clientEmail: "taylor@example.com",
         title: "Conditioning Circuit A",
         description: "4 rounds EMOM + mobility finish. Track average heart rate.",
+        steps: [
+          { id: uid("step"), text: "Complete EMOM rounds 1-2", done: true, completedAt: new Date().toISOString() },
+          { id: uid("step"), text: "Complete EMOM rounds 3-4", done: true, completedAt: new Date().toISOString() },
+          { id: uid("step"), text: "Complete mobility finisher", done: true, completedAt: new Date().toISOString() },
+          { id: uid("step"), text: "Log average heart rate after training", done: false, completedAt: "" }
+        ],
         dueDate: isoDateFromNow(4),
-        progress: 75,
-        status: "In Progress",
         createdAt: new Date().toISOString()
       }
     ];
@@ -469,7 +593,7 @@
 
     save(KEYS.users, users);
     save(KEYS.reviews, reviews);
-    save(KEYS.assignments, assignments);
+    saveAssignments(assignments);
     save(KEYS.bookings, bookings);
     save(KEYS.messages, messages);
     save(KEYS.consultations, consultations);
@@ -1582,11 +1706,10 @@
       showBookingTypeGuidance();
     });
   }
-function renderClientAssignmentList(container, client) {
+function renderClientAssignmentList(container, client, options) {
     if (!container || !client) return;
-    const assignments = load(KEYS.assignments, []).filter((item) => {
-      return item.clientId === client.id || item.clientEmail.toLowerCase() === client.email.toLowerCase();
-    });
+    const allowStepToggle = Boolean(options && options.allowStepToggle);
+    const assignments = getClientAssignments(client);
 
     if (!assignments.length) {
       container.innerHTML = '<div class="list-item muted">No workout assignments yet.</div>';
@@ -1595,16 +1718,52 @@ function renderClientAssignmentList(container, client) {
 
     container.innerHTML = assignments
       .map((item) => {
+        const progress = getAssignmentProgressMeta(item);
+        const checklist = Array.isArray(item.steps) ? item.steps : [];
         return (
           '<div class="list-item"><strong>' +
           escapeHtml(item.title) +
           "</strong> - due " +
           formatDate(item.dueDate) +
+          ' <span class="badge ' +
+          statusClass(item.status) +
+          '">' +
+          escapeHtml(item.status) +
+          "</span>" +
           '<div class="muted">' +
           escapeHtml(item.description) +
-          '</div><div class="star-row">Progress: ' +
-          escapeHtml(String(item.progress)) +
-          "%</div></div>"
+          '</div><div class="assignment-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' +
+          escapeHtml(String(progress.percent)) +
+          '"><span class="assignment-progress-fill" style="width:' +
+          escapeHtml(String(progress.percent)) +
+          '%"></span></div><div class="assignment-progress-meta">' +
+          escapeHtml(String(progress.percent)) +
+          "% complete (" +
+          escapeHtml(String(progress.completed)) +
+          "/" +
+          escapeHtml(String(progress.total)) +
+          ' steps)</div><div class="assignment-checklist">' +
+          checklist
+            .map((step, stepIndex) => {
+              const stepId = step && step.id ? String(step.id) : "step_" + stepIndex;
+              const isDone = Boolean(step && step.done === true);
+              return (
+                '<label class="assignment-check-item' +
+                (isDone ? " done" : "") +
+                '"><input type="checkbox" data-assignment-id="' +
+                escapeHtml(item.id) +
+                '" data-assignment-step-id="' +
+                escapeHtml(stepId) +
+                '"' +
+                (isDone ? " checked" : "") +
+                (allowStepToggle ? "" : " disabled") +
+                " /><span>" +
+                escapeHtml(step && step.text ? step.text : "Step") +
+                "</span></label>"
+              );
+            })
+            .join("") +
+          "</div></div>"
         );
       })
       .join("");
@@ -1688,9 +1847,6 @@ function renderClientAssignmentList(container, client) {
     const fullAccessArea = document.getElementById("clientFullAccessArea");
     const assignmentList = document.getElementById("clientAssignments");
     const bookingList = document.getElementById("clientBookings");
-    const progressForm = document.getElementById("progressForm");
-    const progressSelect = document.getElementById("progressAssignmentId");
-    const progressNotice = document.getElementById("progressNotice");
     const messageForm = document.getElementById("messageForm");
     const messageNotice = document.getElementById("messageNotice");
     const messageHistory = document.getElementById("clientMessageHistory");
@@ -1753,8 +1909,8 @@ function renderClientAssignmentList(container, client) {
       }
       if (subtitle) {
         subtitle.textContent = needsConsultation
-          ? "Book your consultation to unlock messaging, review submission, and progress tracking."
-          : "View sessions, update assignment progress, message your trainer, and submit a review.";
+          ? "Book your consultation to unlock messaging, review submission, and assignment tools."
+          : "View sessions, complete assignment steps, message your trainer, and submit a review.";
       }
 
       if (gatePanel) gatePanel.classList.toggle("hidden", !needsConsultation);
@@ -1764,20 +1920,9 @@ function renderClientAssignmentList(container, client) {
         return;
       }
 
-      renderClientAssignmentList(assignmentList, client);
+      renderClientAssignmentList(assignmentList, client, { allowStepToggle: true });
       renderClientBookings(bookingList, client);
       renderClientMessageHistory(messageHistory, client);
-
-      const assignments = load(KEYS.assignments, []).filter((item) => item.clientId === client.id || item.clientEmail === client.email);
-      if (progressSelect) {
-        progressSelect.innerHTML = "";
-        assignments.forEach((item) => {
-          const opt = document.createElement("option");
-          opt.value = item.id;
-          opt.textContent = item.title + " (" + item.progress + "%)";
-          progressSelect.appendChild(opt);
-        });
-      }
     }
 
     function applyPendingActionResult(result, fallbackNotice) {
@@ -2007,30 +2152,41 @@ function renderClientAssignmentList(container, client) {
       });
     }
 
-    if (progressForm) {
-      progressForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        clearNotice(progressNotice);
+    if (assignmentList) {
+      assignmentList.addEventListener("change", function (event) {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement) || target.type !== "checkbox") return;
+
+        const assignmentId = target.getAttribute("data-assignment-id");
+        const stepId = target.getAttribute("data-assignment-step-id");
+        if (!assignmentId || !stepId) return;
+
         const client = getCurrentClient();
-        if (isFeatureLocked(client, progressNotice)) {
+        if (isFeatureLocked(client, portalActionNotice || messageNotice || quickReviewNotice || loginNotice)) {
           refreshPortal();
           return;
         }
 
-        const assignmentId = progressSelect.value;
-        const progress = Number(document.getElementById("progressPercent").value || "0");
-        const rows = load(KEYS.assignments, []);
+        const rows = getAssignments();
         const row = rows.find((item) => item.id === assignmentId);
-        if (!row) {
-          setNotice(progressNotice, "error", "Pick an assignment first.");
-          return;
-        }
-        row.progress = Math.max(0, Math.min(100, progress));
-        row.status = row.progress >= 100 ? "Completed" : "In Progress";
-        save(KEYS.assignments, rows);
-        progressForm.reset();
-        setNotice(progressNotice, "success", "Progress updated.");
-        refreshPortal();
+        if (!row) return;
+
+        const isOwner =
+          row.clientId === client.id ||
+          normalizeEmail(row.clientEmail || "") === normalizeEmail(client.email || "");
+        if (!isOwner) return;
+
+        const steps = Array.isArray(row.steps) ? row.steps : [];
+        const step = steps.find((item) => String(item.id) === String(stepId));
+        if (!step) return;
+
+        step.done = target.checked;
+        step.completedAt = target.checked ? new Date().toISOString() : "";
+        const rowIndex = rows.findIndex((item) => item.id === assignmentId);
+        if (rowIndex < 0) return;
+        rows[rowIndex] = normalizeAssignmentRow({ ...row, steps: steps });
+        saveAssignments(rows);
+        renderClientAssignmentList(assignmentList, client, { allowStepToggle: true });
       });
     }
 
@@ -2201,6 +2357,7 @@ function renderClientAssignmentList(container, client) {
     const assignmentForm = document.getElementById("assignWorkoutForm");
     const assignmentNotice = document.getElementById("assignWorkoutNotice");
     const assignmentClient = document.getElementById("assignmentClient");
+    const assignmentSteps = document.getElementById("assignmentSteps");
     const siteContentForm = document.getElementById("siteContentForm");
     const siteHomeTitle = document.getElementById("siteHomeTitle");
     const siteHomeText = document.getElementById("siteHomeText");
@@ -2567,7 +2724,7 @@ function renderClientAssignmentList(container, client) {
       const consultations = load(KEYS.consultations, []).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
       const bookings = load(KEYS.bookings, []).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
       const messages = load(KEYS.messages, []).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-      const assignments = load(KEYS.assignments, []).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+      const assignments = getAssignments().sort((a, b) => b.createdAt.localeCompare(a.createdAt));
       const reviews = load(KEYS.reviews, []).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
       if (kpiConsults) kpiConsults.textContent = String(consultations.filter((c) => c.status === "Pending").length);
@@ -2629,23 +2786,23 @@ function renderClientAssignmentList(container, client) {
             const suggestedDate = row.suggestedDate || "";
             const suggestedTime = row.suggestedTime || "";
             const suggestionSummary = suggestedDate && suggestedTime
-              ? '<div class="muted">Current suggestion: ' + formatDate(suggestedDate) + ' at ' + to12Hour(suggestedTime) + '</div>'
-              : '<div class="muted">No reschedule suggestion sent.</div>';
+              ? '<div class="booking-suggestion-summary">Current suggestion: ' + formatDate(suggestedDate) + ' at ' + to12Hour(suggestedTime) + '</div>'
+              : '<div class="booking-suggestion-summary">No suggestion sent yet.</div>';
             const suggestionCell =
-              '<form class="table-inline-form" data-booking-reschedule-form="' +
+              '<form class="table-inline-form booking-reschedule-form" data-booking-reschedule-form="' +
               escapeHtml(row.id) +
               '">' +
-              '<input type="date" data-booking-suggest-date="' +
+              '<input type="date" aria-label="Suggested reschedule date" data-booking-suggest-date="' +
               escapeHtml(row.id) +
               '" value="' +
               escapeHtml(suggestedDate) +
               '" />' +
-              '<input type="time" step="3600" data-booking-suggest-time="' +
+              '<input type="time" step="3600" aria-label="Suggested reschedule time" data-booking-suggest-time="' +
               escapeHtml(row.id) +
               '" value="' +
               escapeHtml(suggestedTime) +
               '" />' +
-              '<button class="btn btn-light" type="submit">Save</button>' +
+              '<button class="btn btn-light booking-reschedule-save" type="submit">Save Suggestion</button>' +
               '</form>' +
               suggestionSummary;
 
@@ -2725,6 +2882,7 @@ function renderClientAssignmentList(container, client) {
       if (assignmentsBody) {
         assignmentsBody.innerHTML = assignments
           .map((row) => {
+            const progress = getAssignmentProgressMeta(row);
             return (
               "<tr><td>" +
               escapeHtml(row.clientName || row.clientEmail) +
@@ -2733,8 +2891,12 @@ function renderClientAssignmentList(container, client) {
               "</td><td>" +
               formatDate(row.dueDate) +
               "</td><td>" +
-              escapeHtml(String(row.progress)) +
-              "%</td><td>" +
+              escapeHtml(String(progress.percent)) +
+              '%<div class="muted">' +
+              escapeHtml(String(progress.completed)) +
+              "/" +
+              escapeHtml(String(progress.total)) +
+              " steps</div></td><td>" +
               escapeHtml(row.status) +
               "</td></tr>"
             );
@@ -3030,14 +3192,15 @@ function renderClientAssignmentList(container, client) {
 
         const title = (document.getElementById("assignmentTitle").value || "").trim();
         const description = (document.getElementById("assignmentDescription").value || "").trim();
+        const stepLines = parseAssignmentStepsInput(assignmentSteps ? assignmentSteps.value : "");
         const dueDate = document.getElementById("assignmentDueDate").value;
 
-        if (!title || !description || !dueDate) {
-          setNotice(assignmentNotice, "error", "Title, description, and due date are required.");
+        if (!title || !description || !dueDate || !stepLines.length) {
+          setNotice(assignmentNotice, "error", "Title, description, checklist steps, and due date are required.");
           return;
         }
 
-        const rows = load(KEYS.assignments, []);
+        const rows = getAssignments();
         rows.unshift({
           id: uid("asg"),
           clientId: user.id,
@@ -3045,12 +3208,11 @@ function renderClientAssignmentList(container, client) {
           clientEmail: user.email,
           title: title,
           description: description,
+          steps: stepLines.map((text, index) => ({ id: "step_" + index + "_" + uid("i"), text: text, done: false, completedAt: "" })),
           dueDate: dueDate,
-          progress: 0,
-          status: "Assigned",
           createdAt: new Date().toISOString()
         });
-        save(KEYS.assignments, rows);
+        saveAssignments(rows);
         assignmentForm.reset();
         setNotice(assignmentNotice, "success", "Workout assignment sent.");
         renderAdminTables();
@@ -3215,6 +3377,7 @@ function renderClientAssignmentList(container, client) {
       save(KEYS.availabilityDefaults, defaultAvailabilityDefaults());
     }
     migrateLegacySeedReviews();
+    migrateAssignmentChecklists();
     applySiteCustomization();
     applyAuthNavVisibility();
     setActiveNav();

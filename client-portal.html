@@ -102,13 +102,13 @@
               <h2 id="clientWelcome">Welcome back.</h2>
               <button id="clientLogout" class="btn btn-secondary" type="button">Sign Out</button>
             </div>
-            <p id="portalSubtitle" class="muted">View sessions, update assignment progress, message your trainer, and submit a review.</p>
+            <p id="portalSubtitle" class="muted">View sessions, complete assignment checklists, message your trainer, and submit a review.</p>
             <div id="portalActionNotice" class="notice"></div>
           </div>
 
           <div id="consultationGate" class="section panel hidden">
             <h3>Consultation required before portal tools unlock</h3>
-            <p class="muted">New clients must complete a consultation booking first. Once booked, messaging, reviews, and progress tools unlock automatically.</p>
+            <p class="muted">New clients must complete a consultation booking first. Once booked, messaging, reviews, and assignment tools unlock automatically.</p>
             <div class="stack">
               <a class="btn btn-primary" href="start-here.html">Go to New Clients Intake</a>
               <a class="btn btn-light" href="booking.html">Book consultation time</a>
@@ -129,25 +129,7 @@
               </article>
             </div>
 
-            <div class="section split">
-              <article class="panel">
-                <h3>Update assignment progress</h3>
-                <form id="progressForm" class="form-grid">
-                  <label class="full">
-                    Assignment
-                    <select id="progressAssignmentId"></select>
-                  </label>
-                  <label>
-                    Completion %
-                    <input id="progressPercent" type="number" min="0" max="100" value="0" required />
-                  </label>
-                  <div>
-                    <button class="btn btn-primary" type="submit" style="margin-top: 1.4rem">Save Progress</button>
-                  </div>
-                </form>
-                <div id="progressNotice" class="notice"></div>
-              </article>
-
+            <div class="section">
               <article class="panel">
                 <h3>Message your trainer</h3>
                 <form id="messageForm" class="form-grid">
