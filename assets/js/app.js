@@ -403,7 +403,9 @@
   }
 
   function normalizeClassAdSchedule(value) {
-    const schedule = (value || "").trim().replace(/^sponsored\s+class\s+ad\s*-\s*/i, "");
+    const schedule = (value || "")
+      .replace(/sponsored\s+class\s+ad\s*-?\s*/gi, "")
+      .trim();
     return schedule || "Wednesdays at 11:00 AM";
   }
 
@@ -1152,6 +1154,8 @@
     const prevBtn = document.getElementById("rotatorPrev");
     const nextBtn = document.getElementById("rotatorNext");
     const panel = document.getElementById("reviewRotatorPanel") || (quote ? quote.closest(".review-rotator") : null);
+    const reviewHeadingText = "Client Momentum";
+    const adHeadingText = "Its Never Too Late For Fitness.";
 
     if (!quote) return;
 
@@ -1185,7 +1189,7 @@
       if (slide.type === "class") {
         if (panel) panel.classList.add("is-ad");
         if (heading) {
-          heading.textContent = "Its Never Too Late For Fitness.";
+          heading.textContent = adHeadingText;
           heading.classList.add("is-ad");
         }
         if (adGraphic) adGraphic.setAttribute("aria-hidden", "false");
@@ -1197,7 +1201,7 @@
         const item = slide.item;
         if (panel) panel.classList.remove("is-ad");
         if (heading) {
-          heading.textContent = "Client Momentum";
+          heading.textContent = reviewHeadingText;
           heading.classList.remove("is-ad");
         }
         if (adGraphic) adGraphic.setAttribute("aria-hidden", "true");
