@@ -407,9 +407,13 @@ textarea {
 }
 
 .rotator-heading {
-  color: #f3d862;
+  color: #1d2a42;
   letter-spacing: 0.01em;
-  text-shadow: 0 1px 10px rgba(214, 162, 32, 0.28);
+}
+
+.rotator-heading.is-ad {
+  color: #f7f9fd;
+  text-shadow: 0 1px 10px rgba(10, 14, 22, 0.28);
 }
 
 .rotator-controls {
