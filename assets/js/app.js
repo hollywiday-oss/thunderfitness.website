@@ -1186,12 +1186,14 @@
     let index = 0;
     let timer = null;
     const renderSlide = function (slide) {
-      if (slide.type === "class") {
+      const isClassSlide = slide.type === "class";
+      if (heading) {
+        heading.textContent = isClassSlide ? adHeadingText : reviewHeadingText;
+        heading.classList.toggle("is-ad", isClassSlide);
+      }
+
+      if (isClassSlide) {
         if (panel) panel.classList.add("is-ad");
-        if (heading) {
-          heading.textContent = adHeadingText;
-          heading.classList.add("is-ad");
-        }
         if (adGraphic) adGraphic.setAttribute("aria-hidden", "false");
         quote.textContent = slide.title;
         if (meta) meta.textContent = slide.schedule;
@@ -1200,10 +1202,6 @@
       } else {
         const item = slide.item;
         if (panel) panel.classList.remove("is-ad");
-        if (heading) {
-          heading.textContent = reviewHeadingText;
-          heading.classList.remove("is-ad");
-        }
         if (adGraphic) adGraphic.setAttribute("aria-hidden", "true");
         quote.textContent = "\"" + item.text + "\"";
         if (meta) meta.textContent = (item.anonymous ? "Anonymous Client" : item.name) + " - " + new Date(item.createdAt).toLocaleDateString();
