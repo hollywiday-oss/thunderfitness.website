@@ -351,6 +351,15 @@
       homeHeroTitle: "Charge your body. Build your strongest routine.",
       homeHeroText: "Personal coaching designed for real schedules. New clients can request a consultation, existing clients can book sessions, track progress, and stay connected with your trainer in one place.",
       homeHeroImage: DEFAULT_HOME_HERO_IMAGE,
+      homeCardOneTitle: "Strength + Conditioning",
+      homeCardOneText: "Customized plans that balance power, mobility, and sustainable progression.",
+      homeCardTwoTitle: "Nutrition Habits",
+      homeCardTwoText: "Simple accountability prompts and routines that match your lifestyle.",
+      homeCardThreeTitle: "Weekly Coaching",
+      homeCardThreeText: "Message support, assignment check-ins, and data-driven adjustments each week.",
+      homeClassAdTitle: "CAListhenics with CAL",
+      homeClassAdSchedule: "Sponsored Class Ad - Wednesdays at 11:00 AM",
+      homeClassAdDetails: "Bodyweight-focused class for coordination, endurance, strength, and mobility. Great for all levels.",
       aboutPhoto: DEFAULT_ABOUT_PHOTO,
       aboutHeading: "Meet your Thunder Fitness coach",
       aboutIntro: "The Thunder Fitness approach combines accountable coaching, high-energy sessions, and practical habits to help clients feel stronger and stay consistent.",
@@ -429,12 +438,24 @@
       const title = document.getElementById("homeHeroTitle");
       const text = document.getElementById("homeHeroText");
       const heroImage = document.getElementById("homeHeroImage");
+      const cardOneTitle = document.getElementById("homeCardOneTitle");
+      const cardOneText = document.getElementById("homeCardOneText");
+      const cardTwoTitle = document.getElementById("homeCardTwoTitle");
+      const cardTwoText = document.getElementById("homeCardTwoText");
+      const cardThreeTitle = document.getElementById("homeCardThreeTitle");
+      const cardThreeText = document.getElementById("homeCardThreeText");
 
       if (title) title.textContent = settings.homeHeroTitle;
       if (text) text.textContent = settings.homeHeroText;
       if (heroImage) {
         heroImage.src = normalizeHomeMediaSrc(settings.homeHeroImage);
       }
+      if (cardOneTitle) cardOneTitle.textContent = settings.homeCardOneTitle;
+      if (cardOneText) cardOneText.textContent = settings.homeCardOneText;
+      if (cardTwoTitle) cardTwoTitle.textContent = settings.homeCardTwoTitle;
+      if (cardTwoText) cardTwoText.textContent = settings.homeCardTwoText;
+      if (cardThreeTitle) cardThreeTitle.textContent = settings.homeCardThreeTitle;
+      if (cardThreeText) cardThreeText.textContent = settings.homeCardThreeText;
     }
 
     if (page === "about") {
@@ -680,7 +701,42 @@
     return visible + "*".repeat(hiddenCount) + "@" + domain;
   }
 
+  function getEmailJsConfig() {
+    const cfg = window.THUNDER_EMAILJS || {};
+    const serviceId = (cfg.serviceId || "").trim();
+    const templateId = (cfg.templateId || "").trim();
+    const publicKey = (cfg.publicKey || "").trim();
+    const fromName = (cfg.fromName || "Thunder Fitness").trim();
+    const replyTo = normalizeEmail(cfg.replyTo || "no-reply@thunderfitness.website");
+
+    if (!serviceId || !templateId || !publicKey) return null;
+    return { serviceId, templateId, publicKey, fromName, replyTo };
+  }
+
   async function sendSignupOtpEmail(pending) {
+    const emailJsConfig = getEmailJsConfig();
+    if (emailJsConfig && window.emailjs && typeof window.emailjs.send === "function") {
+      try {
+        await window.emailjs.send(
+          emailJsConfig.serviceId,
+          emailJsConfig.templateId,
+          {
+            to_email: pending.email,
+            to_name: pending.name || "Client",
+            otp_code: pending.otpCode,
+            otp_ttl_minutes: OTP_TTL_MINUTES,
+            app_name: "Thunder Fitness",
+            from_name: emailJsConfig.fromName,
+            reply_to: emailJsConfig.replyTo
+          },
+          { publicKey: emailJsConfig.publicKey }
+        );
+        return { sent: true, mode: "emailjs" };
+      } catch (_error) {
+        return { sent: false, mode: "emailjs" };
+      }
+    }
+
     const endpoint = (window.THUNDER_OTP_ENDPOINT || "").trim();
     if (!endpoint) {
       return { sent: true, mode: "demo" };
@@ -1078,6 +1134,7 @@
   }
 
   function initHome() {
+    const settings = getSiteSettings();
     const reviews = load(KEYS.reviews, []).filter((item) => item.showOnHome !== false);
     const quote = document.getElementById("rotatorQuote");
     const meta = document.getElementById("rotatorMeta");
@@ -1092,9 +1149,9 @@
 
     const classSlide = {
       type: "class",
-      title: "CAListhenics with CAL",
-      schedule: "Sponsored Class Ad - Wednesdays at 11:00 AM",
-      details: "Bodyweight-focused class for coordination, endurance, strength, and mobility. Great for all levels."
+      title: settings.homeClassAdTitle,
+      schedule: settings.homeClassAdSchedule,
+      details: settings.homeClassAdDetails
     };
 
     const slides = [];
@@ -2361,6 +2418,12 @@ function renderClientAssignmentList(container, client, options) {
     const siteContentForm = document.getElementById("siteContentForm");
     const siteHomeTitle = document.getElementById("siteHomeTitle");
     const siteHomeText = document.getElementById("siteHomeText");
+    const siteHomeCardOneTitle = document.getElementById("siteHomeCardOneTitle");
+    const siteHomeCardOneText = document.getElementById("siteHomeCardOneText");
+    const siteHomeCardTwoTitle = document.getElementById("siteHomeCardTwoTitle");
+    const siteHomeCardTwoText = document.getElementById("siteHomeCardTwoText");
+    const siteHomeCardThreeTitle = document.getElementById("siteHomeCardThreeTitle");
+    const siteHomeCardThreeText = document.getElementById("siteHomeCardThreeText");
     const siteHeroImageFile = document.getElementById("siteHeroImageFile");
     const siteHeroImagePreview = document.getElementById("siteHeroImagePreview");
     const siteResetHomeImage = document.getElementById("siteResetHomeImage");
@@ -2452,6 +2515,12 @@ function renderClientAssignmentList(container, client, options) {
       const settings = getSiteSettings();
       if (siteHomeTitle) siteHomeTitle.value = settings.homeHeroTitle;
       if (siteHomeText) siteHomeText.value = settings.homeHeroText;
+      if (siteHomeCardOneTitle) siteHomeCardOneTitle.value = settings.homeCardOneTitle;
+      if (siteHomeCardOneText) siteHomeCardOneText.value = settings.homeCardOneText;
+      if (siteHomeCardTwoTitle) siteHomeCardTwoTitle.value = settings.homeCardTwoTitle;
+      if (siteHomeCardTwoText) siteHomeCardTwoText.value = settings.homeCardTwoText;
+      if (siteHomeCardThreeTitle) siteHomeCardThreeTitle.value = settings.homeCardThreeTitle;
+      if (siteHomeCardThreeText) siteHomeCardThreeText.value = settings.homeCardThreeText;
       if (siteHeroImagePreview) siteHeroImagePreview.src = toAdminMediaPreviewSrc(settings.homeHeroImage);
       if (siteHeroImageFile) siteHeroImageFile.value = "";
       if (aboutAdminHeading) aboutAdminHeading.value = settings.aboutHeading;
@@ -3278,9 +3347,15 @@ function renderClientAssignmentList(container, client, options) {
 
         const nextTitle = (siteHomeTitle.value || "").trim();
         const nextText = (siteHomeText.value || "").trim();
+        const nextCardOneTitle = (siteHomeCardOneTitle && siteHomeCardOneTitle.value ? siteHomeCardOneTitle.value : "").trim();
+        const nextCardOneText = (siteHomeCardOneText && siteHomeCardOneText.value ? siteHomeCardOneText.value : "").trim();
+        const nextCardTwoTitle = (siteHomeCardTwoTitle && siteHomeCardTwoTitle.value ? siteHomeCardTwoTitle.value : "").trim();
+        const nextCardTwoText = (siteHomeCardTwoText && siteHomeCardTwoText.value ? siteHomeCardTwoText.value : "").trim();
+        const nextCardThreeTitle = (siteHomeCardThreeTitle && siteHomeCardThreeTitle.value ? siteHomeCardThreeTitle.value : "").trim();
+        const nextCardThreeText = (siteHomeCardThreeText && siteHomeCardThreeText.value ? siteHomeCardThreeText.value : "").trim();
 
-        if (!nextTitle || !nextText) {
-          setNotice(siteContentNotice, "error", "Please fill out homepage headline and subtext.");
+        if (!nextTitle || !nextText || !nextCardOneTitle || !nextCardOneText || !nextCardTwoTitle || !nextCardTwoText || !nextCardThreeTitle || !nextCardThreeText) {
+          setNotice(siteContentNotice, "error", "Please complete homepage headline, subtext, and all three bottom boxes.");
           return;
         }
 
@@ -3300,6 +3375,12 @@ function renderClientAssignmentList(container, client, options) {
         saveSiteSettings({
           homeHeroTitle: nextTitle,
           homeHeroText: nextText,
+          homeCardOneTitle: nextCardOneTitle,
+          homeCardOneText: nextCardOneText,
+          homeCardTwoTitle: nextCardTwoTitle,
+          homeCardTwoText: nextCardTwoText,
+          homeCardThreeTitle: nextCardThreeTitle,
+          homeCardThreeText: nextCardThreeText,
           homeHeroImage: nextImage
         });
         hydrateSiteCustomizationForms();
