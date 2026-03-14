@@ -27,7 +27,7 @@ Trainer dashboard:
 
 ## Notes
 
-- Data is stored in `localStorage`, so both websites share the same demo data in one browser.
+- Data is stored in `localStorage`, so both websites share the same demo data only within the same browser on the same device.
 - All content is placeholder and ready to replace with real text, media, and integrations.
 - Styling is tuned to Thunder Fitness brand colors (charcoal, yellow, gold) for a modern unisex vibe.
 - New account sign-up requires email OTP verification before account activation.
